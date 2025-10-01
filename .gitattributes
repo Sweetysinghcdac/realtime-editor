@@ -1,0 +1,5 @@
+# Force backend files to use CRLF (Windows style)
+backend/** text eol=crlf
+
+# Default behavior for everything else
+* text=auto
