@@ -80,7 +80,7 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function decline(Request $request, Invitation $invitation)
+   public function decline(Request $request, Invitation $invitation)
     {
         $this->authorize('respond', $invitation);
 
@@ -88,14 +88,20 @@ class InvitationController extends Controller
             return response()->json(['message' => 'Invitation already handled.'], 422);
         }
 
-        $invitation->update(['status' => 'declined', 'updated_at' => now()]);
+        $invitation->update([
+            'status' => 'declined',
+            'updated_at' => now(),
+        ]);
+
+        // Recalculate pending invitation count for this user
+        $count = $invitation->invitee->pendingInvitationsCount();
 
         // Broadcast update
-        event(new InvitationUpdated($invitation));
+        event(new InvitationCountUpdated($invitation->invitee_id, $count));
 
         return response()->json([
             'message' => 'Invitation declined.',
-            'invitation' => $invitation
+            'invitation' => $invitation,
         ]);
     }
 
@@ -112,7 +118,11 @@ class InvitationController extends Controller
             ->delete();
 
         $count = $user->pendingInvitationsCount();
+
+        // Broadcast update
         event(new InvitationCountUpdated($user->id, $count));
+
         return response()->json(['message' => 'Access revoked successfully.']);
     }
+
 }
