@@ -110,15 +110,20 @@ Document Versioning
 
 GET /api/documents/{id}/versions → List all versions of a document
 
-POST /api/documents/{id}/versions/{versionId}/revert → Revert to a specific version
+POST /api/documents/{document}/revert/{version} → Revert to a specific version
 
 Invitations
 
 GET /api/invitations → List all invitations
 
+POST /api/documents/{document}/invite → Send invitation
+
 POST /api/invitations/{id}/accept → Accept invitation
 
 POST /api/invitations/{id}/decline → Decline invitation
+
+
+POST /api/documents/{document}/revoke/{user} → Revoke invitation
 
 Search
 
